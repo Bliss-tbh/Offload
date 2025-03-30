@@ -1,9 +1,15 @@
 package com.bliss.offload;
 
 import com.mojang.logging.LogUtils;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.level.ServerChunkCache;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -39,8 +45,18 @@ public class Offload
     }
 
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event)
+    public void onServerStarting(ChunkEvent event)
     {
+        long e;
+        e = 0;
+        com.bliss.offload.client.ClientChunkHandler.generateAndSendChunk(
+        0,
+        0,
+        e,
+        com.bliss.offload.server.ServerChunkManager
+        .serializeWithCodec(ChunkGenerator.CODEC,
+         Minecraft.getInstance().level.getServer().getLevel(Level.OVERWORLD).getChunkSource().getGenerator(),
+          Minecraft.getInstance().level.getServer().registryAccess()));
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
